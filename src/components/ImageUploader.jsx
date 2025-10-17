@@ -13,7 +13,7 @@ function ImageUploader({ onUpload }) {
 
     try {
       setUploading(true);
-      const res = await axios.post("http://localhost:5000/api/upload", formData, {
+      const res = await axios.post("https://real-estate-backend-z8aa.onrender.com/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       onUpload(res.data.url); // send uploaded URL back to parent
