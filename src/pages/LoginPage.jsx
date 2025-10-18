@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import RealEstateBg from "../assets/real-estate-bg.jpg"; // Updated background
+import RealEstateBg from "../assets/real-estate-bg.jpg";
 
 const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // ✅ new toggle
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,7 +19,12 @@ const LoginPage = ({ onLogin }) => {
     setError("");
 
     try {
-      const response = await fetch("https://real-estate-backend-z8aa.onrender.com/api/auth/login", {
+      // ✅ Change API URL dynamically based on toggle
+      const url = isAdmin
+        ? "https://real-estate-backend-z8aa.onrender.com/api/admin/login"
+        : "https://real-estate-backend-z8aa.onrender.com/api/auth/login";
+
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -30,7 +36,14 @@ const LoginPage = ({ onLogin }) => {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userData", JSON.stringify(data.user));
         if (onLogin) onLogin(data.token);
-        navigate(data.user.role === "admin" ? "/admin-dashboard" : "/dashboard", { replace: true });
+
+        // ✅ Navigate accordingly
+        navigate(
+          data.user?.role === "admin" || isAdmin
+            ? "/admin-dashboard"
+            : "/dashboard",
+          { replace: true }
+        );
       } else {
         setError(data.message || "Login failed. Check your credentials.");
       }
@@ -48,8 +61,37 @@ const LoginPage = ({ onLogin }) => {
       style={{ backgroundImage: `url(${RealEstateBg})` }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-4 text-center text-gray-800">Login</h1>
+        {/* 🔄 Switch buttons */}
+        <div className="flex justify-between mb-6">
+          <button
+            onClick={() => setIsAdmin(false)}
+            className={`px-3 py-2 w-1/2 rounded-l-md font-medium ${
+              !isAdmin
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Switch to User
+          </button>
+          <button
+            onClick={() => setIsAdmin(true)}
+            className={`px-3 py-2 w-1/2 rounded-r-md font-medium ${
+              isAdmin
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Switch to Admin
+          </button>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-3xl font-bold mb-4 text-center text-gray-800">
+          {isAdmin ? "Admin Login" : "User Login"}
+        </h1>
+
         {error && <p className="text-red-600 mb-2">{error}</p>}
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -76,11 +118,16 @@ const LoginPage = ({ onLogin }) => {
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading
+              ? "Logging in..."
+              : isAdmin
+              ? "Login as Admin"
+              : "Login as User"}
           </button>
         </form>
+
         <p className="mt-4 text-sm text-center text-gray-700">
-          Don't have an account?{" "}
+          Don’t have an account?{" "}
           <Link to="/register" className="text-blue-600 font-medium">
             Register
           </Link>

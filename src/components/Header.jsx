@@ -13,7 +13,6 @@ const Header = ({ token, userData, onLogout }) => {
     navigate("/login", { replace: true });
   };
 
-  // Home link target: /home for users, /admin-dashboard for admins
   const homeLink = userRole === "admin" ? "/admin-dashboard" : "/home";
 
   return (
@@ -28,15 +27,13 @@ const Header = ({ token, userData, onLogout }) => {
 
       {/* Navigation */}
       <nav className="flex gap-4 items-center">
-        {/* ✅ User or Admin Logged In */}
+        {/* Logged in (User or Admin) */}
         {token && (
           <>
-            {/* Always show Home */}
             <Link to={homeLink} className="hover:text-gray-200 transition">
               Home
             </Link>
 
-            {/* ✅ Show these only for USERS (not admins) */}
             {userRole !== "admin" && (
               <>
                 <Link to="/about" className="hover:text-gray-200 transition">
@@ -51,7 +48,6 @@ const Header = ({ token, userData, onLogout }) => {
               </>
             )}
 
-            {/* Admin-only link */}
             {userRole === "admin" && (
               <Link
                 to="/add-property"
@@ -61,7 +57,6 @@ const Header = ({ token, userData, onLogout }) => {
               </Link>
             )}
 
-            {/* User info + Logout */}
             <div className="ml-4 flex items-center gap-2">
               <span className="font-medium">{userName}</span>
               <button
@@ -74,7 +69,7 @@ const Header = ({ token, userData, onLogout }) => {
           </>
         )}
 
-        {/* Guest links */}
+        {/* Guest links (before login) */}
         {!token && (
           <>
             <Link to="/login" className="hover:text-gray-200 transition">
@@ -82,9 +77,6 @@ const Header = ({ token, userData, onLogout }) => {
             </Link>
             <Link to="/register" className="hover:text-gray-200 transition">
               Register
-            </Link>
-            <Link to="/admin-login" className="hover:text-gray-200 transition">
-              Admin Login
             </Link>
           </>
         )}
