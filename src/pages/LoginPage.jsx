@@ -6,7 +6,7 @@ const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false); // ✅ new toggle
+  const [isAdmin, setIsAdmin] = useState(false); // ✅ toggle for admin mode
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -36,9 +36,11 @@ const LoginPage = ({ onLogin }) => {
         localStorage.setItem("userData", JSON.stringify(data.user));
         if (onLogin) onLogin(data.token);
 
-        // ✅ Navigate accordingly
+        // ✅ Case-insensitive role check to ensure correct navigation
+        const userRole = data.user?.role?.toLowerCase();
+
         navigate(
-          data.user?.role === "admin" || isAdmin
+          userRole === "admin" || isAdmin
             ? "/admin-dashboard"
             : "/dashboard",
           { replace: true }
@@ -47,8 +49,8 @@ const LoginPage = ({ onLogin }) => {
         setError(data.message || "Login failed. Check your credentials.");
       }
     } catch (err) {
-      console.error(err);
-      setError("Login failed. Please check your connection.");
+      console.error("Login error:", err);
+      setError("Login failed. Please check your connection or try again.");
     } finally {
       setLoading(false);
     }

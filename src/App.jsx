@@ -5,7 +5,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 
 // Layout
@@ -20,6 +19,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import PropertiesPage from "./pages/PropertiesPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Property Pages
 import LuxuryApartment from "./pages/LuxuryApartment";
@@ -80,15 +80,19 @@ function App() {
     if (storedUser) setUserData(storedUser);
   }, []);
 
-  // ✅ Handle login (redirect to homepage)
+  // ✅ Handle login (redirect accordingly)
   const handleLogin = (token, user) => {
     setToken(token);
     setUserData(user);
     localStorage.setItem("authToken", token);
     localStorage.setItem("userData", JSON.stringify(user));
 
-    // redirect to homepage after login
-    window.location.href = "/";
+    // Redirect based on role
+    if (user?.role === "admin") {
+      window.location.href = "/admin-dashboard";
+    } else {
+      window.location.href = "/";
+    }
   };
 
   // ✅ Handle logout (redirect to homepage)
@@ -136,14 +140,15 @@ function App() {
             }
           />
 
-          {/* 🏘️ Property pages */}
+          {/* 📄 Public pages */}
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Question />} />
           <Route path="/privacy-policy" element={<PrivatePolicy />} />
           <Route path="/terms" element={<TermsConditions />} />
-          <Route path="/add-property" element={<AddPropertyPage />} />
           <Route path="/properties" element={<PropertiesPage />} />
+
+          {/* 🏘️ Property details */}
           <Route path="/LuxuryApartment" element={<LuxuryApartment />} />
           <Route path="/BeachHouse" element={<BeachHouse />} />
           <Route path="/ModernDuplex" element={<ModernDuplex />} />
