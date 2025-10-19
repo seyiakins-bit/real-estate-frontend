@@ -34,6 +34,7 @@ const Header = ({ token, userData, onLogout }) => {
               Home
             </Link>
 
+            {/* User Links */}
             {userRole !== "admin" && (
               <>
                 <Link to="/about" className="hover:text-gray-200 transition">
@@ -48,15 +49,25 @@ const Header = ({ token, userData, onLogout }) => {
               </>
             )}
 
+            {/* Admin Links */}
             {userRole === "admin" && (
-              <Link
-                to="/add-property"
-                className="bg-white text-blue-600 px-3 py-1 rounded-md font-semibold hover:bg-gray-100 transition"
-              >
-                Add Property
-              </Link>
+              <>
+                <Link
+                  to="/admin-dashboard"
+                  className="hover:text-gray-200 transition"
+                >
+                  Admin Dashboard
+                </Link>
+                <Link
+                  to="/add-property"
+                  className="bg-white text-blue-600 px-3 py-1 rounded-md font-semibold hover:bg-gray-100 transition"
+                >
+                  Add Property
+                </Link>
+              </>
             )}
 
+            {/* Logout Section */}
             <div className="ml-4 flex items-center gap-2">
               <span className="font-medium">{userName}</span>
               <button

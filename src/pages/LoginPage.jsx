@@ -1,3 +1,4 @@
+// src/pages/LoginPage.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import RealEstateBg from "../assets/real-estate-bg.jpg";
@@ -19,6 +20,7 @@ const LoginPage = ({ onLogin }) => {
     setError("");
 
     try {
+      // ✅ Dynamic URL for admin or user
       const url = isAdmin
         ? "https://real-estate-backend-z8aa.onrender.com/api/auth/admin/login"
         : "https://real-estate-backend-z8aa.onrender.com/api/auth/login";
@@ -32,19 +34,19 @@ const LoginPage = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
+        // ✅ Save auth data
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userData", JSON.stringify(data.user));
         if (onLogin) onLogin(data.token);
 
-        // ✅ Case-insensitive role check to ensure correct navigation
+        // ✅ Role-based navigation
         const userRole = data.user?.role?.toLowerCase();
 
-        navigate(
-          userRole === "admin" || isAdmin
-            ? "/admin-dashboard"
-            : "/dashboard",
-          { replace: true }
-        );
+        if (isAdmin || userRole === "admin") {
+          navigate("/admin-dashboard", { replace: true });
+        } else {
+          navigate("/home", { replace: true });
+        }
       } else {
         setError(data.message || "Login failed. Check your credentials.");
       }
