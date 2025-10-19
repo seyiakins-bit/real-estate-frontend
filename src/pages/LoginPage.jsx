@@ -19,9 +19,8 @@ const LoginPage = ({ onLogin }) => {
     setError("");
 
     try {
-      // ✅ Change API URL dynamically based on toggle
       const url = isAdmin
-        ? "https://real-estate-backend-z8aa.onrender.com/api/admin/login"
+        ? "https://real-estate-backend-z8aa.onrender.com/api/auth/admin/login"
         : "https://real-estate-backend-z8aa.onrender.com/api/auth/login";
 
       const response = await fetch(url, {
