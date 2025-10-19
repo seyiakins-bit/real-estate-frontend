@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import RealEstateBg from "../assets/real-estate-bg.jpg";
@@ -7,7 +6,7 @@ const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false); // ✅ toggle for admin mode
+  const [isAdmin, setIsAdmin] = useState(false); // toggle for admin mode
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,7 +19,6 @@ const LoginPage = ({ onLogin }) => {
     setError("");
 
     try {
-      // ✅ Dynamic URL for admin or user
       const url = isAdmin
         ? "https://real-estate-backend-z8aa.onrender.com/api/auth/admin/login"
         : "https://real-estate-backend-z8aa.onrender.com/api/auth/login";
@@ -34,19 +32,16 @@ const LoginPage = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ Save auth data
+        // ✅ Pass both token and user data to onLogin
+        if (onLogin) onLogin(data.token, data.user);
+
+        // ✅ Save auth data locally
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userData", JSON.stringify(data.user));
-        if (onLogin) onLogin(data.token);
 
-        // ✅ Role-based navigation
-        const userRole = data.user?.role?.toLowerCase();
-
-        if (isAdmin || userRole === "admin") {
-          navigate("/admin-dashboard", { replace: true });
-        } else {
-          navigate("/home", { replace: true });
-        }
+        // ✅ Navigate based on role
+        const role = data.user?.role?.toLowerCase();
+        navigate(role === "admin" ? "/admin-dashboard" : "/home", { replace: true });
       } else {
         setError(data.message || "Login failed. Check your credentials.");
       }
@@ -64,7 +59,6 @@ const LoginPage = ({ onLogin }) => {
       style={{ backgroundImage: `url(${RealEstateBg})` }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md">
-        {/* 🔄 Switch buttons */}
         <div className="flex justify-between mb-6">
           <button
             onClick={() => setIsAdmin(false)}
@@ -88,7 +82,6 @@ const LoginPage = ({ onLogin }) => {
           </button>
         </div>
 
-        {/* Title */}
         <h1 className="text-3xl font-bold mb-4 text-center text-gray-800">
           {isAdmin ? "Admin Login" : "User Login"}
         </h1>

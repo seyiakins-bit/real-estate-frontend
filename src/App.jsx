@@ -1,11 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Layout
 import Header from "./components/Header";
@@ -63,7 +58,6 @@ function App() {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
 
-  // ✅ Safe JSON parse
   const safeParse = (data) => {
     try {
       return data && data !== "undefined" ? JSON.parse(data) : null;
@@ -72,7 +66,6 @@ function App() {
     }
   };
 
-  // ✅ Load saved auth info on start
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
     const storedUser = safeParse(localStorage.getItem("userData"));
@@ -80,14 +73,12 @@ function App() {
     if (storedUser) setUserData(storedUser);
   }, []);
 
-  // ✅ Handle login (redirect accordingly)
   const handleLogin = (token, user) => {
     setToken(token);
     setUserData(user);
     localStorage.setItem("authToken", token);
     localStorage.setItem("userData", JSON.stringify(user));
 
-    // Redirect based on role
     if (user?.role === "admin") {
       window.location.href = "/admin-dashboard";
     } else {
@@ -95,7 +86,6 @@ function App() {
     }
   };
 
-  // ✅ Handle logout (redirect to homepage)
   const handleLogout = () => {
     setToken(null);
     setUserData(null);
@@ -104,43 +94,21 @@ function App() {
     window.location.href = "/";
   };
 
+  // ✅ PrivateRoute wrapper for admin-only pages
+  const PrivateRoute = ({ children }) => {
+    if (token && userData?.role === "admin") return children;
+    return <Navigate to="/" replace />;
+  };
+
   return (
     <Router>
       <Header token={token} userData={userData} onLogout={handleLogout} />
 
       <main className="min-h-screen pt-20">
         <Routes>
-          {/* 🏠 Everyone sees homepage */}
+          {/* Public Pages */}
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
-
-          {/* 🔐 Authentication */}
-          <Route
-            path="/login"
-            element={
-              !token ? (
-                <LoginPage onLogin={handleLogin} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-          <Route
-            path="/register"
-            element={!token ? <RegisterPage /> : <Navigate to="/" replace />}
-          />
-          <Route
-            path="/admin-login"
-            element={
-              !token ? (
-                <AdminLoginPage onLogin={handleLogin} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-
-          {/* 📄 Public pages */}
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Question />} />
@@ -148,7 +116,7 @@ function App() {
           <Route path="/terms" element={<TermsConditions />} />
           <Route path="/properties" element={<PropertiesPage />} />
 
-          {/* 🏘️ Property details */}
+          {/* Property Details */}
           <Route path="/LuxuryApartment" element={<LuxuryApartment />} />
           <Route path="/BeachHouse" element={<BeachHouse />} />
           <Route path="/ModernDuplex" element={<ModernDuplex />} />
@@ -181,41 +149,47 @@ function App() {
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
 
-          {/* 🧑‍💼 Admin Dashboard */}
+          {/* Auth */}
+          <Route
+            path="/login"
+            element={!token ? <LoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/register"
+            element={!token ? <RegisterPage /> : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/admin-login"
+            element={!token ? <AdminLoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
+          />
+
+          {/* Admin Routes */}
           <Route
             path="/admin-dashboard"
             element={
-              token && userData?.role === "admin" ? (
+              <PrivateRoute>
                 <AdminDashboard />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              </PrivateRoute>
             }
           />
-
-          {/* 🏗️ Property Management (Admin only) */}
           <Route
             path="/add-property"
             element={
-              token && userData?.role === "admin" ? (
+              <PrivateRoute>
                 <AddPropertyPage />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              </PrivateRoute>
             }
           />
           <Route
             path="/edit-property/:id"
             element={
-              token && userData?.role === "admin" ? (
+              <PrivateRoute>
                 <EditPropertyPage />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              </PrivateRoute>
             }
           />
 
-          {/* 404 fallback */}
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
