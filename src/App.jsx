@@ -100,11 +100,17 @@ function App() {
     return <Navigate to="/" replace />;
   };
 
+  // ✅ Check if current route is admin
+  const isAdminRoute = window.location.pathname.startsWith("/admin");
+
   return (
     <Router>
-      <Header token={token} userData={userData} onLogout={handleLogout} />
+      {/* Hide Header on admin routes */}
+      {!isAdminRoute && (
+        <Header token={token} userData={userData} onLogout={handleLogout} />
+      )}
 
-      <main className="min-h-screen pt-20">
+      <main className={`min-h-screen ${!isAdminRoute ? "pt-20" : ""}`}>
         <Routes>
           {/* Public Pages */}
           <Route path="/" element={<HomePage />} />
@@ -194,7 +200,8 @@ function App() {
         </Routes>
       </main>
 
-      <Footer />
+      {/* Hide Footer on admin routes */}
+      {!isAdminRoute && <Footer />}
     </Router>
   );
 }
