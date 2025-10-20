@@ -20,10 +20,19 @@ const AdminDashboard = () => {
         const res = await fetch("https://real-estate-backend-z8aa.onrender.com/api/properties", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const data = await res.json();
-        setProperties(data);
+
+        // ✅ Safety check: ensure we got an array
+        if (!Array.isArray(data)) {
+          console.error("Expected array, got:", data);
+          setProperties([]);
+        } else {
+          setProperties(data);
+        }
       } catch (error) {
         console.error("Error fetching properties:", error);
+        setProperties([]);
       } finally {
         setLoading(false);
       }
@@ -84,16 +93,13 @@ const AdminDashboard = () => {
       ) : (
         <div className="flex flex-col gap-4">
           {properties.map((property) => (
-            <div
-              key={property.id}
-              className="border p-4 rounded-lg shadow-sm"
-            >
+            <div key={property.id} className="border p-4 rounded-lg shadow-sm">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-xl">{property.title}</h3>
                   <p>📍 {property.location}</p>
                   <p>💰 {property.price}</p>
-                  <p>🏠 Owner: {property.ownerName || "N/A"}</p>
+                  <p>🏠 Owner: {property.owner?.name || "N/A"}</p> {/* ✅ Safe owner display */}
                 </div>
                 <div className="flex gap-2">
                   <Link
