@@ -65,14 +65,14 @@ const Sidebar = () => {
             </nav>
 
             {/* Logout button */}
-            <div className="p-4 border-t">
+            {/* <div className="p-4 border-t">
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
               >
                 <LogOut size={18} /> Logout
-              </button>
-            </div>
+              </button> */}
+            {/* </div> */}
           </motion.aside>
         )}
       </AnimatePresence>
