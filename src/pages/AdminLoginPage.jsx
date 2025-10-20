@@ -19,25 +19,33 @@ const AdminLoginPage = ({ onLogin }) => {
     setError("");
 
     try {
-      const res = await fetch("https://real-estate-backend-z8aa.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://real-estate-backend-z8aa.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
       setLoading(false);
 
-      if (!res.ok) {
-        throw new Error(data.message || "Invalid credentials");
-      }
+      if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
-      if (data.user.role.toLowerCase() !== "admin") {
+      if (!data.user || data.user.role.toLowerCase() !== "admin") {
         throw new Error("Access denied: Admins only");
       }
 
-      onLogin(data.token, data.user);
-      navigate("/admin-dashboard");
+      // ✅ Save token and user data before redirect
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userData", JSON.stringify(data.user));
+
+      // ✅ Notify parent if available
+      if (onLogin) onLogin(data.token, data.user);
+
+      // ✅ Navigate directly to dashboard
+      navigate("/admin-dashboard", { replace: true });
     } catch (err) {
       setError(err.message);
       setLoading(false);
