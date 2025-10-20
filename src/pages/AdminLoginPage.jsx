@@ -19,15 +19,11 @@ const AdminLoginPage = ({ onLogin }) => {
     setError("");
 
     try {
-      // ✅ Use the admin login endpoint directly
-      const res = await fetch(
-        "https://real-estate-backend-z8aa.onrender.com/api/auth/admin/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch("https://real-estate-backend-z8aa.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       const data = await res.json();
       setLoading(false);
@@ -36,22 +32,14 @@ const AdminLoginPage = ({ onLogin }) => {
         throw new Error(data.message || "Invalid credentials");
       }
 
-      // ✅ Ensure this user is indeed an admin
-      if (!data.user || data.user.role?.toLowerCase() !== "admin") {
+      if (data.user.role.toLowerCase() !== "admin") {
         throw new Error("Access denied: Admins only");
       }
 
-      // ✅ Save token and user in localStorage
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userData", JSON.stringify(data.user));
-
-      // ✅ Notify App state
-      if (onLogin) onLogin(data.token, data.user);
-
-      // ✅ Navigate to admin dashboard
-      navigate("/admin-dashboard", { replace: true });
+      onLogin(data.token, data.user);
+      navigate("/admin-dashboard");
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message);
       setLoading(false);
     }
   };
@@ -65,13 +53,9 @@ const AdminLoginPage = ({ onLogin }) => {
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
           Admin Login
         </h2>
-
         {error && (
-          <div className="bg-red-100 text-red-600 p-2 mb-4 rounded text-center">
-            {error}
-          </div>
+          <div className="bg-red-100 text-red-600 p-2 mb-4 rounded">{error}</div>
         )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
@@ -81,10 +65,9 @@ const AdminLoginPage = ({ onLogin }) => {
               onChange={handleChange}
               value={formData.email}
               required
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border p-2 rounded"
             />
           </div>
-
           <div>
             <label className="block text-gray-700 font-medium">Password</label>
             <input
@@ -93,16 +76,13 @@ const AdminLoginPage = ({ onLogin }) => {
               onChange={handleChange}
               value={formData.password}
               required
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border p-2 rounded"
             />
           </div>
-
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
