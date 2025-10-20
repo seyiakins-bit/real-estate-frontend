@@ -70,12 +70,12 @@ const Header = ({ token, userData, onLogout }) => {
             {/* Logout Section */}
             <div className="ml-4 flex items-center gap-2">
               <span className="font-medium">{userName}</span>
-              {/* <button
+              <button
                 onClick={handleLogout}
                 className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition"
               >
                 Logout
-              </button> */}
+              </button>
             </div>
           </>
         )}
