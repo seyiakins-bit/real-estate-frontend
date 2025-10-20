@@ -58,12 +58,12 @@ const Header = ({ token, userData, onLogout }) => {
                 >
                   Admin Dashboard
                 </Link>
-                <Link
+                {/* <Link
                   to="/add-property"
                   className="bg-white text-blue-600 px-3 py-1 rounded-md font-semibold hover:bg-gray-100 transition"
                 >
                   Add Property
-                </Link>
+                </Link> */}
               </>
             )}
 
