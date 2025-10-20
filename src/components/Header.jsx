@@ -13,26 +13,29 @@ const Header = ({ token, userData, onLogout }) => {
     navigate("/login", { replace: true });
   };
 
-  const homeLink = userRole === "admin" ? "/admin-dashboard" : "/home";
-
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
       {/* Logo + Site Name */}
       <div className="flex items-center gap-2">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
-        <Link to={homeLink} className="text-xl font-bold hover:text-gray-200 transition">
+        <Link
+          to={userRole === "admin" ? "/admin-dashboard" : "/home"}
+          className="text-xl font-bold hover:text-gray-200 transition"
+        >
           Akins Luxury Homes
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex gap-4 items-center">
-        {/* Logged in (User or Admin) */}
-        {token && (
+        {token ? (
           <>
-            <Link to={homeLink} className="hover:text-gray-200 transition">
-              Home
-            </Link>
+            {/* Only show "Home" for non-admin users */}
+            {userRole !== "admin" && (
+              <Link to="/home" className="hover:text-gray-200 transition">
+                Home
+              </Link>
+            )}
 
             {/* User Links */}
             {userRole !== "admin" && (
@@ -51,23 +54,12 @@ const Header = ({ token, userData, onLogout }) => {
 
             {/* Admin Links */}
             {userRole === "admin" && (
-              <>
-                <Link
-                  to="/admin-dashboard"
-                  className="hover:text-gray-200 transition"
-                >
-                  Admin Dashboard
-                </Link>
-                {/* <Link
-                  to="/add-property"
-                  className="bg-white text-blue-600 px-3 py-1 rounded-md font-semibold hover:bg-gray-100 transition"
-                >
-                  Add Property
-                </Link> */}
-              </>
+              <Link to="/admin-dashboard" className="hover:text-gray-200 transition">
+                Admin Dashboard
+              </Link>
             )}
 
-            {/* Logout Section */}
+            {/* Logout */}
             <div className="ml-4 flex items-center gap-2">
               <span className="font-medium">{userName}</span>
               <button
@@ -78,11 +70,9 @@ const Header = ({ token, userData, onLogout }) => {
               </button>
             </div>
           </>
-        )}
-
-        {/* Guest links (before login) */}
-        {!token && (
+        ) : (
           <>
+            {/* Guest Links */}
             <Link to="/login" className="hover:text-gray-200 transition">
               Login
             </Link>

@@ -1,6 +1,6 @@
 // src/pages/AdminLoginPage.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LuxuryBg from "../assets/luxury-bg.jpg";
 
 const AdminLoginPage = ({ onLogin }) => {
@@ -58,12 +58,26 @@ const AdminLoginPage = ({ onLogin }) => {
       style={{ backgroundImage: `url(${LuxuryBg})` }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg max-w-md w-full">
+        {/* ✅ Back to Home link */}
+        <div className="mb-4 text-center">
+          <Link
+            to="/"
+            className="text-blue-600 hover:text-blue-800 font-medium underline"
+          >
+            ← Back to Home
+          </Link>
+        </div>
+
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
           Admin Login
         </h2>
+
         {error && (
-          <div className="bg-red-100 text-red-600 p-2 mb-4 rounded">{error}</div>
+          <div className="bg-red-100 text-red-600 p-2 mb-4 rounded">
+            {error}
+          </div>
         )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
@@ -76,6 +90,7 @@ const AdminLoginPage = ({ onLogin }) => {
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label className="block text-gray-700 font-medium">Password</label>
             <input
@@ -87,6 +102,7 @@ const AdminLoginPage = ({ onLogin }) => {
               className="w-full border p-2 rounded"
             />
           </div>
+
           <button
             type="submit"
             disabled={loading}
