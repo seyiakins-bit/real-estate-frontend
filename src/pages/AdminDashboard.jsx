@@ -82,16 +82,16 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar - fixed on desktop, collapsible on mobile */}
+      {/* Sidebar (visible on desktop, toggle on mobile if needed) */}
       <div className="hidden md:block">
         <Sidebar />
       </div>
 
-      {/* Main Section */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto md:ml-64">
         <TopBar />
 
-        {/* Dashboard Overview Cards */}
+        {/* Dashboard Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
           <DashboardCard title="Total Properties" value={properties.length} icon="🏠" />
           <DashboardCard title="Active Listings" value={properties.length} icon="📌" />
@@ -99,13 +99,13 @@ const AdminDashboard = () => {
           <DashboardCard title="New Leads" value={25} icon="✉️" />
         </div>
 
-        {/* Analytics Section */}
+        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-6">
           <AnalyticsChart title="Property Views" data={chartData} />
           <AnalyticsChart title="Sales / Lease Trends" data={chartData} />
         </div>
 
-        {/* Property Management Section */}
+        {/* Property Management */}
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Manage Properties</h2>
@@ -173,11 +173,6 @@ const AdminDashboard = () => {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Mobile Sidebar (collapsible) */}
-      <div className="md:hidden">
-        <Sidebar />
       </div>
     </div>
   );
