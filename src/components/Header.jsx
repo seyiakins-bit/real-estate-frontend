@@ -18,8 +18,9 @@ const Header = ({ token, userData, onLogout }) => {
       {/* Logo + Site Name */}
       <div className="flex items-center gap-2">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
+        {/* Logo always links to home */}
         <Link
-          to={userRole === "admin" ? "/admin-dashboard" : "/home"}
+          to="/home"
           className="text-xl font-bold hover:text-gray-200 transition"
         >
           Akins Luxury Homes
@@ -36,7 +37,6 @@ const Header = ({ token, userData, onLogout }) => {
                 <Link to="/home" className="hover:text-gray-200 transition">
                   Home
                 </Link>
-                {/* Dashboard link for regular users */}
                 <Link to="/dashboard" className="hover:text-gray-200 transition">
                   My Dashboard
                 </Link>
