@@ -1,40 +1,85 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import ImageUploader from "../components/ImageUploader"; // import uploader
+// src/pages/UserDashboard.jsx
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ImageUploader from "../components/ImageUploader";
 
-const initialProperties = [
-  { id: 1, title: "Luxury Apartment", location: "Lagos", price: "₦50,000,000", images: [] },
-  { id: 2, title: "Beach House", location: "Lekki", price: "₦120,000,000", images: [] },
-];
+const UserDashboard = ({ token, userData }) => {
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-const UserDashboard = () => {
-  const [properties, setProperties] = useState(initialProperties);
+  // Fetch user's properties from backend
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!token || !userData) return;
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this property?")) {
+      try {
+        const res = await fetch(
+          `https://real-estate-backend-z8aa.onrender.com/properties/user/${userData.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const data = await res.json();
+        setProperties(data);
+      } catch (err) {
+        console.error("Failed to fetch properties:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [token, userData]);
+
+  // Delete property
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this property?")) return;
+
+    try {
+      await fetch(`https://real-estate-backend-z8aa.onrender.com/properties/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProperties(properties.filter((property) => property.id !== id));
+    } catch (err) {
+      console.error("Failed to delete property:", err);
     }
   };
 
-  // add image to a property
-  const handleImageUpload = (id, url) => {
-    setProperties((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, images: [...p.images, url] } : p
-      )
-    );
+  // Upload image for property
+  const handleImageUpload = async (id, url) => {
+    try {
+      const res = await fetch(`https://real-estate-backend-z8aa.onrender.com/properties/${id}/images`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ url }),
+      });
+      if (res.ok) {
+        setProperties((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, images: [...p.images, url] } : p))
+        );
+      }
+    } catch (err) {
+      console.error("Failed to upload image:", err);
+    }
   };
+
+  if (loading) return <p className="p-4">Loading properties...</p>;
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">My Properties</h1>
-        <Link
-          to="/add-property"
+        <button
+          onClick={() => navigate("/add-property")}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Add Property
-        </Link>
+        </button>
       </div>
 
       {properties.length === 0 ? (
@@ -42,10 +87,7 @@ const UserDashboard = () => {
       ) : (
         <div className="flex flex-col gap-4">
           {properties.map((property) => (
-            <div
-              key={property.id}
-              className="border p-4 rounded"
-            >
+            <div key={property.id} className="border p-4 rounded">
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="font-bold text-lg">{property.title}</h2>

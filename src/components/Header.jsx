@@ -32,14 +32,14 @@ const Header = ({ token, userData, onLogout }) => {
           <>
             {/* Only show "Home" for non-admin users */}
             {userRole !== "admin" && (
-              <Link to="/home" className="hover:text-gray-200 transition">
-                Home
-              </Link>
-            )}
-
-            {/* User Links */}
-            {userRole !== "admin" && (
               <>
+                <Link to="/home" className="hover:text-gray-200 transition">
+                  Home
+                </Link>
+                {/* Dashboard link for regular users */}
+                <Link to="/dashboard" className="hover:text-gray-200 transition">
+                  My Dashboard
+                </Link>
                 <Link to="/about" className="hover:text-gray-200 transition">
                   About Us
                 </Link>
