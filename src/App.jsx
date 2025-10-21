@@ -1,11 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Layout
 import Header from "./components/Header";
@@ -21,6 +16,9 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import PropertiesPage from "./pages/PropertiesPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import Contact from "./pages/Contact";
+import ScheduleVisitForm from "./pages/ScheduleVisitForm";
+import VerificationRequired from "./pages/VerificationRequired"; // Create this page
 
 // Property Pages
 import LuxuryApartment from "./pages/LuxuryApartment";
@@ -55,11 +53,9 @@ import EstateMansion from "./pages/EstateMansion";
 import EstateMansion1 from "./pages/EstateMansion1";
 import EstateMansion2 from "./pages/EstateMansion2";
 import About from "./pages/About";
-import Contact from "./pages/Contact";
 import Question from "./pages/Question";
 import PrivatePolicy from "./pages/PrivatePolicy";
 import TermsConditions from "./pages/TermsConditions";
-import ScheduleVisitForm from "./pages/ScheduleVisitForm";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -101,22 +97,24 @@ function App() {
     window.location.href = "/";
   };
 
-  // ✅ PrivateRoute wrapper for admin-only pages
+  // Admin-only route
   const PrivateRoute = ({ children }) => {
     if (token && userData?.role === "admin") return children;
     return <Navigate to="/" replace />;
   };
 
-  // ✅ Check if current route is admin
+  // User route with verification for Add Property
+  const UserVerifiedRoute = ({ children }) => {
+    if (!token) return <Navigate to="/login" replace />;
+    if (!userData?.isVerified) return <Navigate to="/verification-required" replace />;
+    return children;
+  };
+
   const isAdminRoute = window.location.pathname.startsWith("/admin");
 
   return (
     <Router>
-      {/* Hide Header on admin routes */}
-      {!isAdminRoute && (
-        <Header token={token} userData={userData} onLogout={handleLogout} />
-      )}
-
+      {!isAdminRoute && <Header token={token} userData={userData} onLogout={handleLogout} />}
       <main className={`min-h-screen ${!isAdminRoute ? "pt-20" : ""}`}>
         <Routes>
           {/* Public Pages */}
@@ -161,19 +159,12 @@ function App() {
           <Route path="/EstateMansion" element={<EstateMansion />} />
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
-          <Route path="/schedule-visit/:propertyId" element={<ScheduleVisitForm />}
-          />
+          <Route path="/schedule-visit/:propertyId" element={<ScheduleVisitForm />} />
 
           {/* Auth */}
           <Route
             path="/login"
-            element={
-              !token ? (
-                <LoginPage onLogin={handleLogin} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
+            element={!token ? <LoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
           />
           <Route
             path="/register"
@@ -181,23 +172,22 @@ function App() {
           />
           <Route
             path="/admin-login"
-            element={
-              !token ? (
-                <AdminLoginPage onLogin={handleLogin} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
+            element={!token ? <AdminLoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
           />
 
+          {/* User Dashboard */}
           <Route
             path="/dashboard"
+            element={token ? <UserDashboard token={token} userData={userData} /> : <Navigate to="/login" replace />}
+          />
+
+          {/* Add Property - requires verification */}
+          <Route
+            path="/add-property"
             element={
-              token ? (
-                <UserDashboard token={token} userData={userData} />
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <UserVerifiedRoute>
+                <AddPropertyPage token={token} userData={userData} />
+              </UserVerifiedRoute>
             }
           />
 
@@ -211,14 +201,6 @@ function App() {
             }
           />
           <Route
-            path="/add-property"
-            element={
-              <PrivateRoute>
-                <AddPropertyPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
             path="/edit-property/:id"
             element={
               <PrivateRoute>
@@ -227,12 +209,13 @@ function App() {
             }
           />
 
+          {/* Verification Required Page */}
+          <Route path="/verification-required" element={<VerificationRequired />} />
+
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-
-      {/* Hide Footer on admin routes */}
       {!isAdminRoute && <Footer />}
     </Router>
   );
