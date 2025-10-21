@@ -67,7 +67,7 @@ const UserDashboard = ({ token, userData }) => {
       {/* Dashboard Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Welcome back, {userData?.name}!</h1>
+          <h1 className="text-3xl font-bold">Welcome </h1>
           <p className="text-gray-600">Here’s what’s happening with your account today.</p>
         </div>
         <div className="flex items-center gap-4">
@@ -92,13 +92,13 @@ const UserDashboard = ({ token, userData }) => {
           Add Property
         </button>
         <button
-          onClick={() => navigate("/search-properties")}
+          onClick={() => navigate("/properties")}
           className="bg-yellow-500 text-white p-4 rounded hover:bg-yellow-600 transition"
         >
           Search Properties
         </button>
         <button
-          onClick={() => navigate("/contact-agent")}
+          onClick={() => navigate("/contact")}
           className="bg-purple-600 text-white p-4 rounded hover:bg-purple-700 transition"
         >
           Contact Agent

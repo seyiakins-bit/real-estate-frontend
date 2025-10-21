@@ -1,0 +1,41 @@
+import { useState } from "react";
+
+const ScheduleVisitForm = ({ propertyId }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch("/api/schedule-visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ propertyId, name, email, date, time, message }),
+    });
+
+    if (response.ok) {
+      setStatus("Visit scheduled successfully!");
+      setName(""); setEmail(""); setDate(""); setTime(""); setMessage("");
+    } else {
+      setStatus("Failed to schedule visit.");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} required />
+      <input type="email" placeholder="Your Email" value={email} onChange={e => setEmail(e.target.value)} required />
+      <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
+      <input type="time" value={time} onChange={e => setTime(e.target.value)} required />
+      <textarea placeholder="Message (optional)" value={message} onChange={e => setMessage(e.target.value)} />
+      <button type="submit">Schedule Visit</button>
+      {status && <p>{status}</p>}
+    </form>
+  );
+};
+
+export default ScheduleVisitForm;

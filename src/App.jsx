@@ -59,6 +59,7 @@ import Contact from "./pages/Contact";
 import Question from "./pages/Question";
 import PrivatePolicy from "./pages/PrivatePolicy";
 import TermsConditions from "./pages/TermsConditions";
+import ScheduleVisitForm from "./pages/ScheduleVisitForm";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -160,6 +161,8 @@ function App() {
           <Route path="/EstateMansion" element={<EstateMansion />} />
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
+          <Route path="/schedule-visit/:propertyId" element={<ScheduleVisitForm />}
+          />
 
           {/* Auth */}
           <Route
