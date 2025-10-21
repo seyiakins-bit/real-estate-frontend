@@ -1,6 +1,11 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 // Layout
 import Header from "./components/Header";
@@ -15,6 +20,7 @@ import RegisterPage from "./pages/RegisterPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import PropertiesPage from "./pages/PropertiesPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import UserDashboard from "./pages/UserDashboard";
 
 // Property Pages
 import LuxuryApartment from "./pages/LuxuryApartment";
@@ -154,11 +160,18 @@ function App() {
           <Route path="/EstateMansion" element={<EstateMansion />} />
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
+          
 
           {/* Auth */}
           <Route
             path="/login"
-            element={!token ? <LoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
+            element={
+              !token ? (
+                <LoginPage onLogin={handleLogin} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
           />
           <Route
             path="/register"
@@ -166,7 +179,24 @@ function App() {
           />
           <Route
             path="/admin-login"
-            element={!token ? <AdminLoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
+            element={
+              !token ? (
+                <AdminLoginPage onLogin={handleLogin} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              token ? (
+                <UserDashboard token={token} userData={userData} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
           />
 
           {/* Admin Routes */}
