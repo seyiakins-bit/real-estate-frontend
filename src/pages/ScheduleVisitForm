@@ -1,40 +1,110 @@
-import { useState } from "react";
+// src/pages/ScheduleVisitForm.jsx
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-const ScheduleVisitForm = ({ propertyId }) => {
+const ScheduleVisitForm = () => {
+  const { propertyId } = useParams(); // Get propertyId from URL
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setSuccess("");
 
-    const response = await fetch("/api/schedule-visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ propertyId, name, email, date, time, message }),
-    });
+    try {
+      const res = await fetch(`https://real-estate-backend-z8aa.onrender.com/schedule-visit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          propertyId,
+          name,
+          email,
+          date,
+          message,
+        }),
+      });
 
-    if (response.ok) {
-      setStatus("Visit scheduled successfully!");
-      setName(""); setEmail(""); setDate(""); setTime(""); setMessage("");
-    } else {
-      setStatus("Failed to schedule visit.");
+      if (res.ok) {
+        setSuccess("Visit scheduled successfully!");
+        setName("");
+        setEmail("");
+        setDate("");
+        setMessage("");
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Failed to schedule visit");
+      }
+    } catch (err) {
+      console.error("Error scheduling visit:", err);
+      alert("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} required />
-      <input type="email" placeholder="Your Email" value={email} onChange={e => setEmail(e.target.value)} required />
-      <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
-      <input type="time" value={time} onChange={e => setTime(e.target.value)} required />
-      <textarea placeholder="Message (optional)" value={message} onChange={e => setMessage(e.target.value)} />
-      <button type="submit">Schedule Visit</button>
-      {status && <p>{status}</p>}
-    </form>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Schedule a Visit</h1>
+      <p className="mb-6">Please fill in your details to schedule a visit for property ID: <strong>{propertyId}</strong></p>
+
+      {success && <p className="mb-4 text-green-600">{success}</p>}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
+        <input
+          type="text"
+          placeholder="Your Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="border p-2 rounded"
+        />
+        <input
+          type="email"
+          placeholder="Your Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="border p-2 rounded"
+        />
+        <input
+          type="date"
+          placeholder="Preferred Date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          required
+          className="border p-2 rounded"
+        />
+        <textarea
+          placeholder="Message (optional)"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            {loading ? "Scheduling..." : "Schedule Visit"}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
