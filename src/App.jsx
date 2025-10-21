@@ -15,10 +15,6 @@ import RegisterPage from "./pages/RegisterPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import PropertiesPage from "./pages/PropertiesPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import UserDashboard from "./pages/UserDashboard";
-import Contact from "./pages/Contact";
-import ScheduleVisitForm from "./pages/ScheduleVisitForm";
-import VerificationRequired from "./pages/VerificationRequired"; // Create this page
 
 // Property Pages
 import LuxuryApartment from "./pages/LuxuryApartment";
@@ -53,6 +49,7 @@ import EstateMansion from "./pages/EstateMansion";
 import EstateMansion1 from "./pages/EstateMansion1";
 import EstateMansion2 from "./pages/EstateMansion2";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Question from "./pages/Question";
 import PrivatePolicy from "./pages/PrivatePolicy";
 import TermsConditions from "./pages/TermsConditions";
@@ -97,24 +94,22 @@ function App() {
     window.location.href = "/";
   };
 
-  // Admin-only route
+  // ✅ PrivateRoute wrapper for admin-only pages
   const PrivateRoute = ({ children }) => {
     if (token && userData?.role === "admin") return children;
     return <Navigate to="/" replace />;
   };
 
-  // User route with verification for Add Property
-  const UserVerifiedRoute = ({ children }) => {
-    if (!token) return <Navigate to="/login" replace />;
-    if (!userData?.isVerified) return <Navigate to="/verification-required" replace />;
-    return children;
-  };
-
+  // ✅ Check if current route is admin
   const isAdminRoute = window.location.pathname.startsWith("/admin");
 
   return (
     <Router>
-      {!isAdminRoute && <Header token={token} userData={userData} onLogout={handleLogout} />}
+      {/* Hide Header on admin routes */}
+      {!isAdminRoute && (
+        <Header token={token} userData={userData} onLogout={handleLogout} />
+      )}
+
       <main className={`min-h-screen ${!isAdminRoute ? "pt-20" : ""}`}>
         <Routes>
           {/* Public Pages */}
@@ -159,7 +154,6 @@ function App() {
           <Route path="/EstateMansion" element={<EstateMansion />} />
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
-          <Route path="/schedule-visit/:propertyId" element={<ScheduleVisitForm />} />
 
           {/* Auth */}
           <Route
@@ -175,28 +169,20 @@ function App() {
             element={!token ? <AdminLoginPage onLogin={handleLogin} /> : <Navigate to="/" replace />}
           />
 
-          {/* User Dashboard */}
-          <Route
-            path="/dashboard"
-            element={token ? <UserDashboard token={token} userData={userData} /> : <Navigate to="/login" replace />}
-          />
-
-          {/* Add Property - requires verification */}
-          <Route
-            path="/add-property"
-            element={
-              <UserVerifiedRoute>
-                <AddPropertyPage token={token} userData={userData} />
-              </UserVerifiedRoute>
-            }
-          />
-
           {/* Admin Routes */}
           <Route
             path="/admin-dashboard"
             element={
               <PrivateRoute>
                 <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-property"
+            element={
+              <PrivateRoute>
+                <AddPropertyPage />
               </PrivateRoute>
             }
           />
@@ -209,13 +195,12 @@ function App() {
             }
           />
 
-          {/* Verification Required Page */}
-          <Route path="/verification-required" element={<VerificationRequired />} />
-
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
+      {/* Hide Footer on admin routes */}
       {!isAdminRoute && <Footer />}
     </Router>
   );
