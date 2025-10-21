@@ -72,11 +72,10 @@ const UserDashboard = ({ token, userData }) => {
         </div>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-            {/* Placeholder for profile picture */}
             {userData?.name?.charAt(0)}
           </div>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => window.location.reload()}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Refresh
@@ -92,13 +91,22 @@ const UserDashboard = ({ token, userData }) => {
         >
           Add Property
         </button>
-        <button className="bg-yellow-500 text-white p-4 rounded hover:bg-yellow-600 transition">
+        <button
+          onClick={() => navigate("/search-properties")}
+          className="bg-yellow-500 text-white p-4 rounded hover:bg-yellow-600 transition"
+        >
           Search Properties
         </button>
-        <button className="bg-purple-600 text-white p-4 rounded hover:bg-purple-700 transition">
+        <button
+          onClick={() => navigate("/contact-agent")}
+          className="bg-purple-600 text-white p-4 rounded hover:bg-purple-700 transition"
+        >
           Contact Agent
         </button>
-        <button className="bg-indigo-600 text-white p-4 rounded hover:bg-indigo-700 transition">
+        <button
+          onClick={() => navigate("/schedule-visit")}
+          className="bg-indigo-600 text-white p-4 rounded hover:bg-indigo-700 transition"
+        >
           Schedule Visit
         </button>
       </div>
@@ -135,7 +143,7 @@ const UserDashboard = ({ token, userData }) => {
                   </div>
                 </div>
 
-                {/* Image uploader for each property */}
+                {/* Image uploader */}
                 <div className="mt-3">
                   <ImageUploader onUpload={(url) => handleImageUpload(property.id, url)} />
                   <div className="flex gap-2 mt-2 overflow-x-auto">
@@ -155,27 +163,23 @@ const UserDashboard = ({ token, userData }) => {
         )}
       </div>
 
-      {/* Placeholders for other dashboard sections */}
+      {/* Dashboard Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Inquiries & Communication */}
         <div className="border p-4 rounded shadow-sm">
           <h2 className="font-bold text-xl mb-2">Inquiries & Messages</h2>
           <p>Coming soon: Manage inquiries from agents or buyers/renters.</p>
         </div>
 
-        {/* Transactions & Bookings */}
         <div className="border p-4 rounded shadow-sm">
           <h2 className="font-bold text-xl mb-2">Transactions & Bookings</h2>
           <p>Coming soon: View payment history and schedule visits.</p>
         </div>
 
-        {/* Account & Settings */}
         <div className="border p-4 rounded shadow-sm">
           <h2 className="font-bold text-xl mb-2">Account & Settings</h2>
           <p>Coming soon: Update profile, security settings, and preferences.</p>
         </div>
 
-        {/* Analytics & Activity */}
         <div className="border p-4 rounded shadow-sm">
           <h2 className="font-bold text-xl mb-2">Analytics & Activity</h2>
           <p>Coming soon: Dashboard charts and property performance metrics.</p>
