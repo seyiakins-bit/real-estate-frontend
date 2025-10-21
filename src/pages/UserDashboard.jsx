@@ -103,12 +103,7 @@ const UserDashboard = ({ token, userData }) => {
         >
           Contact Agent
         </button>
-        <button
-          onClick={() => navigate("/schedule-visit")}
-          className="bg-indigo-600 text-white p-4 rounded hover:bg-indigo-700 transition"
-        >
-          Schedule Visit
-        </button>
+        
       </div>
 
       {/* Property Management */}
