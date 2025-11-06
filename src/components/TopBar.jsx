@@ -1,83 +1,13 @@
-import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, PlusCircle, Menu, X, LogOut } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("adminEmail");
-    navigate("/login");
-  };
-
-  // Sidebar link data
-  const links = [
-    { name: "Dashboard", path: "/admin", icon: <Home size={18} /> },
-    { name: "Add Property", path: "/add-property", icon: <PlusCircle size={18} /> },
-  ];
-
+const TopBar = ({ adminName = "Admin" }) => {
   return (
-    <div className="relative">
-      {/* Toggle button for mobile */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-4 left-4 z-50 p-2 bg-white border rounded-md shadow md:hidden"
-      >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Sidebar container */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.aside
-            initial={{ x: -250 }}
-            animate={{ x: 0 }}
-            exit={{ x: -250 }}
-            transition={{ duration: 0.3 }}
-            className="fixed md:static top-0 left-0 h-full w-64 bg-white border-r shadow-sm flex flex-col z-40"
-          >
-            {/* Brand */}
-            <div className="p-6 border-b text-2xl font-bold text-blue-700">
-              Admin Panel
-            </div>
-
-            {/* Nav links */}
-            <nav className="flex-1 p-4 space-y-2">
-              {links.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 p-2 rounded hover:bg-blue-50 ${
-                    location.pathname === link.path
-                      ? "bg-blue-100 text-blue-700 font-semibold"
-                      : "text-gray-700"
-                  }`}
-                >
-                  {link.icon}
-                  <span>{link.name}</span>
-                </Link>
-              ))}
-            </nav>
-
-            {/* Logout button */}
-            {/* <div className="p-4 border-t">
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
-              >
-                <LogOut size={18} /> Logout
-              </button> */}
-            {/* </div> */}
-          </motion.aside>
-        )}
-      </AnimatePresence>
-    </div>
+    <header className="flex justify-between items-center bg-white shadow-sm p-4 border-b border-gray-100">
+      <h1 className="text-xl font-semibold text-gray-800">
+        Welcome, <span className="text-blue-600">{adminName}</span>
+      </h1>
+    </header>
   );
 };
 
-export default Sidebar;
+export default TopBar;
