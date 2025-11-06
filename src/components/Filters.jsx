@@ -53,7 +53,7 @@ const Filters = ({ onFilter }) => {
       <button
         type="button"
         onClick={handleApply}
-        className="sm:col-span-3 bg-yellow-400 text-black font-medium px-4 py-2 rounded-lg hover:bg-yellow-500 transition"
+        className="sm:col-span-3 bg-blue-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition"
       >
         Apply Filters
       </button>
