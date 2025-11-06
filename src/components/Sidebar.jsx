@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, PlusCircle, Users, FileText, Menu, X, LogOut } from "lucide-react";
+import { Home, PlusCircle, Users, FileText, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const navigate = useNavigate();
   const location = useLocation();
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("adminEmail");
-    navigate("/login");
-  };
 
   const links = [
     { name: "Dashboard", path: "/admin", icon: <Home size={18} /> },
@@ -64,16 +57,6 @@ const Sidebar = () => {
                 </Link>
               ))}
             </nav>
-
-            {/* Logout button */}
-            <div className="p-4 border-t mt-auto">
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
-              >
-                <LogOut size={18} /> Logout
-              </button>
-            </div>
           </motion.aside>
         )}
       </AnimatePresence>
