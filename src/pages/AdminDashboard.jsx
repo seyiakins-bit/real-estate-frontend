@@ -1,12 +1,14 @@
 // src/pages/AdminDashboard.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import DashboardCard from "../components/DashboardCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 import UserManagement from "../components/UserManagement";
 import InquiriesMessages from "../components/InquiriesMessages";
-import AddPropertyPage from "./AddPropertyPage"; // <-- import your AddPropertyPage
+import AddPropertyPage from "./AddPropertyPage";
+import EditPropertyPage from "./EditPropertyPage"; // <-- Make sure you have this page created
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -14,6 +16,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +65,28 @@ const AdminDashboard = () => {
     views: Math.floor(Math.random() * 100),
   }));
 
+  // Delete property handler
+  const handleDeleteProperty = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this property?")) return;
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await fetch(
+        `https://real-estate-backend-z8aa.onrender.com/api/properties/${id}`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.ok) {
+        setProperties(properties.filter((p) => p.id !== id));
+        alert("Property deleted successfully!");
+      } else {
+        const data = await res.json();
+        console.error("Error deleting property:", data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar
@@ -76,6 +101,7 @@ const AdminDashboard = () => {
       <div className="flex-1 flex flex-col overflow-auto md:ml-64">
         <TopBar />
 
+        {/* Dashboard Overview */}
         {activeTab === "dashboard" && (
           <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -96,11 +122,49 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Render the actual AddPropertyPage */}
+        {/* Add Property */}
         {activeTab === "add-property" && <AddPropertyPage />}
 
+        {/* Property Management (Edit/Delete) */}
+        {activeTab === "property-management" && (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Property Management</h2>
+            <div className="space-y-2">
+              {properties.map((property) => (
+                <div
+                  key={property.id}
+                  className="border p-3 rounded flex justify-between items-center bg-white shadow-sm"
+                >
+                  <div>
+                    <p className="font-semibold">{property.title}</p>
+                    <p className="text-sm text-gray-600">{property.location}</p>
+                    <p className="text-sm text-gray-600">Price: ${property.price}</p>
+                    <p className="text-sm text-gray-600">Status: {property.status}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500"
+                      onClick={() => navigate(`/admin/edit-property/${property.id}`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+                      onClick={() => handleDeleteProperty(property.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* User Management */}
         {activeTab === "user-management" && <UserManagement users={users} />}
 
+        {/* Inquiries & Messages */}
         {activeTab === "inquiries" && <InquiriesMessages inquiries={inquiries} />}
       </div>
     </div>

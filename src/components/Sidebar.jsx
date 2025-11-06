@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, PlusCircle, Users, FileText, Menu, X } from "lucide-react";
+import { Home, PlusCircle, Users, FileText, Box, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
@@ -8,6 +8,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   const links = [
     { name: "Dashboard", tab: "dashboard", icon: <Home size={18} /> },
     { name: "Add Property", tab: "add-property", icon: <PlusCircle size={18} /> },
+    { name: "Property Management", tab: "property-management", icon: <Box size={18} /> },
     { name: "User Management", tab: "user-management", icon: <Users size={18} /> },
     { name: "Inquiries & Messages", tab: "inquiries", icon: <FileText size={18} /> },
   ];

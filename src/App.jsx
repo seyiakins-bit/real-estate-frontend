@@ -160,7 +160,6 @@ function App() {
           <Route path="/EstateMansion" element={<EstateMansion />} />
           <Route path="/EstateMansion1" element={<EstateMansion1 />} />
           <Route path="/EstateMansion2" element={<EstateMansion2 />} />
-          
 
           {/* Auth */}
           <Route
