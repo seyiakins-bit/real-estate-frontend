@@ -8,7 +8,6 @@ import AnalyticsChart from "../components/AnalyticsChart";
 import UserManagement from "../components/UserManagement";
 import InquiriesMessages from "../components/InquiriesMessages";
 import AddPropertyPage from "./AddPropertyPage";
-import EditPropertyPage from "./EditPropertyPage";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -139,9 +138,10 @@ const AdminDashboard = () => {
                     <p className="text-sm text-gray-600">Status: {property.status}</p>
                   </div>
                   <div className="flex gap-2">
+                    {/* Navigate to the route defined in App.jsx */}
                     <button
                       className="bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500"
-                      onClick={() => navigate(`/admin/edit-property/${property._id}`)}
+                      onClick={() => navigate(`/edit-property/${property._id}`)}
                     >
                       Edit
                     </button>
