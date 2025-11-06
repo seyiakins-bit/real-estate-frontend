@@ -6,7 +6,7 @@ import DashboardCard from "../components/DashboardCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 import UserManagement from "../components/UserManagement";
 import InquiriesMessages from "../components/InquiriesMessages";
-import AddProperty from "../pages/AddProperty"; // <-- Import your AddProperty page
+import AddPropertyPage from "./AddPropertyPage"; // <-- import your AddPropertyPage
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -76,7 +76,6 @@ const AdminDashboard = () => {
       <div className="flex-1 flex flex-col overflow-auto md:ml-64">
         <TopBar />
 
-        {/* Dashboard Overview */}
         {activeTab === "dashboard" && (
           <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -97,13 +96,11 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Add Property */}
-        {activeTab === "add-property" && <AddProperty />}
+        {/* Render the actual AddPropertyPage */}
+        {activeTab === "add-property" && <AddPropertyPage />}
 
-        {/* User Management */}
         {activeTab === "user-management" && <UserManagement users={users} />}
 
-        {/* Inquiries & Messages */}
         {activeTab === "inquiries" && <InquiriesMessages inquiries={inquiries} />}
       </div>
     </div>
