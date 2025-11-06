@@ -8,7 +8,7 @@ import AnalyticsChart from "../components/AnalyticsChart";
 import UserManagement from "../components/UserManagement";
 import InquiriesMessages from "../components/InquiriesMessages";
 import AddPropertyPage from "./AddPropertyPage";
-import EditPropertyPage from "./EditPropertyPage"; // <-- Make sure you have this page created
+import EditPropertyPage from "./EditPropertyPage";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,26 +24,23 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("authToken");
         if (!token) return;
 
-        // Fetch properties
-        const propRes = await fetch(
-          "https://real-estate-backend-z8aa.onrender.com/api/properties",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const propData = await propRes.json();
+        const [propRes, userRes, inquiryRes] = await Promise.all([
+          fetch("https://real-estate-backend-z8aa.onrender.com/api/properties", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://real-estate-backend-z8aa.onrender.com/api/users", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://real-estate-backend-z8aa.onrender.com/api/inquiries", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-        // Fetch users
-        const userRes = await fetch(
-          "https://real-estate-backend-z8aa.onrender.com/api/users",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const userData = await userRes.json();
-
-        // Fetch inquiries/messages
-        const inquiryRes = await fetch(
-          "https://real-estate-backend-z8aa.onrender.com/api/inquiries",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const inquiryData = await inquiryRes.json();
+        const [propData, userData, inquiryData] = await Promise.all([
+          propRes.json(),
+          userRes.json(),
+          inquiryRes.json(),
+        ]);
 
         setProperties(Array.isArray(propData) ? propData : []);
         setUsers(Array.isArray(userData) ? userData : []);
@@ -76,7 +73,7 @@ const AdminDashboard = () => {
       );
 
       if (res.ok) {
-        setProperties(properties.filter((p) => p.id !== id));
+        setProperties(properties.filter((p) => p._id !== id));
         alert("Property deleted successfully!");
       } else {
         const data = await res.json();
@@ -132,7 +129,7 @@ const AdminDashboard = () => {
             <div className="space-y-2">
               {properties.map((property) => (
                 <div
-                  key={property.id}
+                  key={property._id}
                   className="border p-3 rounded flex justify-between items-center bg-white shadow-sm"
                 >
                   <div>
@@ -144,13 +141,13 @@ const AdminDashboard = () => {
                   <div className="flex gap-2">
                     <button
                       className="bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500"
-                      onClick={() => navigate(`/admin/edit-property/${property.id}`)}
+                      onClick={() => navigate(`/admin/edit-property/${property._id}`)}
                     >
                       Edit
                     </button>
                     <button
                       className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-                      onClick={() => handleDeleteProperty(property.id)}
+                      onClick={() => handleDeleteProperty(property._id)}
                     >
                       Delete
                     </button>
