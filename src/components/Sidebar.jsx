@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { Home, PlusCircle, Users, FileText, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Sidebar = () => {
+const Sidebar = ({ activeTab, setActiveTab }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const location = useLocation();
 
   const links = [
-    { name: "Dashboard", path: "/admin", icon: <Home size={18} /> },
-    { name: "Add Property", path: "/add-property", icon: <PlusCircle size={18} /> },
-    { name: "User Management", path: "/admin/users", icon: <Users size={18} /> },
-    { name: "Inquiries & Messages", path: "/admin/inquiries", icon: <FileText size={18} /> },
+    { name: "Dashboard", tab: "dashboard", icon: <Home size={18} /> },
+    { name: "Add Property", tab: "add-property", icon: <PlusCircle size={18} /> },
+    { name: "User Management", tab: "user-management", icon: <Users size={18} /> },
+    { name: "Inquiries & Messages", tab: "inquiries", icon: <FileText size={18} /> },
   ];
 
   return (
@@ -42,21 +40,18 @@ const Sidebar = () => {
             {/* Navigation Links */}
             <nav className="flex-1 p-4 space-y-2">
               {links.map((link) => {
-                const isActive = location.pathname === link.path;
+                const isActive = activeTab === link.tab;
                 return (
-                  <Link
+                  <button
                     key={link.name}
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 p-2 rounded hover:bg-blue-50 ${
-                      isActive
-                        ? "bg-blue-100 text-blue-700 font-semibold"
-                        : "text-gray-700"
+                    onClick={() => setActiveTab(link.tab)}
+                    className={`w-full flex items-center gap-3 p-2 rounded hover:bg-blue-50 text-left ${
+                      isActive ? "bg-blue-100 text-blue-700 font-semibold" : "text-gray-700"
                     }`}
                   >
                     {link.icon}
                     <span>{link.name}</span>
-                  </Link>
+                  </button>
                 );
               })}
             </nav>
