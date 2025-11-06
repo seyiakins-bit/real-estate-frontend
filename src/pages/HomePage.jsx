@@ -154,7 +154,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 text-gray-800">
       {/* ===== VIDEO HERO SECTION ===== */}
-      <section className="relative h-[80vh] w-full overflow-hidden">
+      <section className="relative h-[80vh] w-full overflow-hidden m-0 p- 0">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src="/videos/akins.mp4"
