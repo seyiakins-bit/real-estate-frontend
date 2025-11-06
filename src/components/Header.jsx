@@ -14,7 +14,7 @@ const Header = ({ token, userData, onLogout }) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-blue-600 text-white px-4 py-0 flex justify-between items-center shadow-md">
       {/* Logo + Site Name */}
       <div className="flex items-center gap-2">
         <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
