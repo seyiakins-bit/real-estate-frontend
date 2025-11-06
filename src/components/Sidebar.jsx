@@ -14,7 +14,6 @@ const Sidebar = () => {
     navigate("/login");
   };
 
-  // Sidebar link data
   const links = [
     { name: "Dashboard", path: "/admin", icon: <Home size={18} /> },
     { name: "Add Property", path: "/add-property", icon: <PlusCircle size={18} /> },
@@ -40,7 +39,7 @@ const Sidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: -250 }}
             transition={{ duration: 0.3 }}
-            className="fixed md:static top-0 left-0 h-full w-64 bg-white border-r shadow-sm flex flex-col z-40"
+            className="fixed top-0 left-0 h-screen w-64 bg-white border-r shadow-sm flex flex-col z-40 overflow-y-auto"
           >
             {/* Admin Panel Header */}
             <div className="p-6 border-b text-2xl font-bold text-blue-700">
@@ -67,7 +66,7 @@ const Sidebar = () => {
             </nav>
 
             {/* Logout button */}
-            <div className="p-4 border-t">
+            <div className="p-4 border-t mt-auto">
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
