@@ -17,7 +17,11 @@ function EditPropertyPage() {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await fetch(`https://real-estate-backend-z8aa.onrender.com/api/properties/${id}`);
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(
+          `https://real-estate-backend-z8aa.onrender.com/api/properties/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         const data = await res.json();
         setFormData(data);
       } catch (error) {
@@ -40,7 +44,7 @@ function EditPropertyPage() {
 
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "real-estate"); // your preset name
+    data.append("upload_preset", "real-estate");
 
     try {
       const res = await fetch(
@@ -71,16 +75,26 @@ function EditPropertyPage() {
     const finalData = { ...formData, image: imageUrl };
 
     try {
-      const res = await fetch(`http://localhost:5000/api/properties/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
-      });
+      const token = localStorage.getItem("authToken");
+      const res = await fetch(
+        `https://real-estate-backend-z8aa.onrender.com/api/properties/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(finalData),
+        }
+      );
 
       if (res.ok) {
         alert(`✅ Property "${formData.title}" updated successfully!`);
-        navigate(`/property/${id}`);
+        // Navigate back to Property Management tab
+        navigate("/admin-dashboard", { state: { activeTab: "property-management" } });
       } else {
+        const data = await res.json();
+        console.error("Update error:", data);
         alert("❌ Failed to update property");
       }
     } catch (error) {
