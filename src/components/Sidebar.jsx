@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Home, PlusCircle, Users, FileText, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,23 +39,26 @@ const Sidebar = () => {
               Admin Panel
             </div>
 
-            {/* Nav links */}
+            {/* Navigation Links */}
             <nav className="flex-1 p-4 space-y-2">
-              {links.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 p-2 rounded hover:bg-blue-50 ${
-                    location.pathname === link.path
-                      ? "bg-blue-100 text-blue-700 font-semibold"
-                      : "text-gray-700"
-                  }`}
-                >
-                  {link.icon}
-                  <span>{link.name}</span>
-                </Link>
-              ))}
+              {links.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 p-2 rounded hover:bg-blue-50 ${
+                      isActive
+                        ? "bg-blue-100 text-blue-700 font-semibold"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {link.icon}
+                    <span>{link.name}</span>
+                  </Link>
+                );
+              })}
             </nav>
           </motion.aside>
         )}
