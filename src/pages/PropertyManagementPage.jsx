@@ -6,14 +6,11 @@ const PropertyManagementPage = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // For editing
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({ title: "", price: "", location: "", image: "" });
 
-  // For adding new property
   const [newProperty, setNewProperty] = useState({ title: "", price: "", location: "", image: "" });
 
-  // Fetch all properties
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -23,9 +20,10 @@ const PropertyManagementPage = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
-        setProperties(data);
+        setProperties(Array.isArray(data) ? data : []); // Ensure it's always an array
       } catch (error) {
         console.error("Error fetching properties:", error);
+        setProperties([]);
       } finally {
         setLoading(false);
       }
@@ -33,7 +31,7 @@ const PropertyManagementPage = () => {
     fetchProperties();
   }, []);
 
-  // Add property
+  // Add new property
   const handleAdd = async () => {
     const { title, price, location, image } = newProperty;
     if (!title || !price || !location || !image) return alert("All fields are required");
@@ -72,18 +70,13 @@ const PropertyManagementPage = () => {
     }
   };
 
-  // Start editing
+  // Edit
   const handleEdit = (property) => {
     setEditingId(property.id);
-    setEditData({
-      title: property.title,
-      price: property.price,
-      location: property.location,
-      image: property.image,
-    });
+    setEditData({ ...property });
   };
 
-  // Update property
+  // Update
   const handleUpdate = async (id) => {
     const { title, price, location, image } = editData;
     if (!title || !price || !location || !image) return alert("All fields are required");
@@ -261,7 +254,7 @@ const PropertyManagementPage = () => {
             ) : (
               <tr>
                 <td colSpan="5" className="text-center p-5 text-gray-500">
-                  No properties found.
+                  No properties yet. Add one above to get started!
                 </td>
               </tr>
             )}
