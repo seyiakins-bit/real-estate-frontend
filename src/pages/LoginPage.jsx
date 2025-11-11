@@ -55,7 +55,7 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center h-[6ovh]"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: `url(${RealEstateBg})` }}
     >
       <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md">
