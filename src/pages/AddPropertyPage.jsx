@@ -2,8 +2,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function AddPropertyPage() {
-  const ownerId = JSON.parse(localStorage.getItem("userData"))?.id || 1;
-  const [formData, setFormData] = useState({ title:"", description:"", price:"", location:"", image:"", ownerId });
+  const userData = JSON.parse(localStorage.getItem("userData")) || {};
+  const isAdmin = userData.role === "ADMIN"; // detect admin
+  const ownerId = isAdmin ? userData.id : userData.id || 1;
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    location: "",
+    image: "",
+    ownerId
+  });
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
@@ -16,7 +26,10 @@ function AddPropertyPage() {
     data.append("file", file);
     data.append("upload_preset", "real-estate");
     try {
-      const res = await fetch("https://api.cloudinary.com/v1_1/dlu8e511s/image/upload", { method:"POST", body:data });
+      const res = await fetch("https://api.cloudinary.com/v1_1/dlu8e511s/image/upload", {
+        method: "POST",
+        body: data
+      });
       const result = await res.json();
       return result.secure_url;
     } catch (error) {
@@ -27,8 +40,6 @@ function AddPropertyPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("authToken");
-    if (!token) return alert("You must be logged in!");
 
     let imageUrl = formData.image;
     if (file) {
@@ -36,22 +47,33 @@ function AddPropertyPage() {
       if (uploadedUrl) imageUrl = uploadedUrl;
     }
 
-    const finalData = { ...formData, image: imageUrl };
+    // Include isAdmin flag for admin creation
+    const finalData = {
+      ...formData,
+      image: imageUrl,
+      images: [imageUrl],
+      isAdmin: isAdmin
+    };
 
     try {
+      const token = localStorage.getItem("authToken");
+      const headers = { "Content-Type": "application/json" };
+      if (!isAdmin && token) headers.Authorization = `Bearer ${token}`;
+
       const res = await fetch("https://real-estate-backend-z8aa.onrender.com/api/properties", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(finalData),
+        headers,
+        body: JSON.stringify(finalData)
       });
 
       const data = await res.json();
+
       if (res.ok) {
         alert(`✅ Property "${formData.title}" added successfully!`);
-        navigate("/"); // go back to management page
+        navigate("/"); // go back to dashboard
       } else {
         alert(data.message || "Failed to add property");
-        console.log("Error adding property:", data);
+        console.error("Error adding property:", data);
       }
     } catch (error) {
       console.error("Error submitting property:", error);
